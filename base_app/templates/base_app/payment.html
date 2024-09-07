@@ -1,0 +1,107 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}
+{{ hotel.name }}
+{% endblock title %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+<link rel="stylesheet" href="{% static 'base_app/css/details.css' %}">
+{% endblock head %}
+
+{% block content %}
+
+ 
+<form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" onsubmit="generateSignature()" target="_blank">
+    <br><br>
+    <table>
+      
+            <tr>
+                <td><strong>Enter the total amount</strong></td>
+                <td><strong>Value</strong></td>
+            </tr>
+            <tr>
+                <td>Amount:</td>
+                <td><input type="number" id="amount" name="amount" value="100" class="form" required></td>
+            </tr>
+            
+               <input type="hidden" id="tax_amount" name="tax_amount" value="0" class="form" required></td>
+            
+             <input type="hidden" id="total_amount" name="total_amount" value="100" class="form" readonly></td>
+            
+              
+              <input type="hidden" id="transaction_uuid" name="transaction_uuid" value="11-200-111sss1" class="form" required></td>
+            
+                
+                <input type="hidden" id="product_code" name="product_code" value="EPAYTEST" class="form" required></td>
+          
+            
+              <input type="hidden" id="product_service_charge" name="product_service_charge" value="0" class="form" required></td>
+           
+            
+              
+                <input type="hidden" id="product_delivery_charge" name="product_delivery_charge" value="0" class="form" required></td>
+           
+            
+            
+                <input type="hidden" id="success_url" name="success_url" value="https://google.com" class="form" required></td>
+           
+            
+             
+                <input type="hidden" id="failure_url" name="failure_url" value="https://facebook.com" class="form" required></td>
+           
+            
+               
+                <input type="hidden" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" class="form" required></td>
+           
+            
+              <input type="hidden" id="signature" name="signature" class="form" required></td>
+            
+            
+               
+               <input type="hidden" id="secret" name="secret" value="8gBm/:&EnhH.1/q" class="form" required></td>
+            
+      
+    </table>
+    <input type="submit" value="Pay with eSewa" class="button" style="display:block !important; background-color: #60bb46; cursor: pointer; color: #fff; border: none; padding: 5px 10px;">
+  </form>
+
+  <script>
+    // Function to update total amount and generate signature
+    function updateTotalAmount() {
+        var amount = parseFloat(document.getElementById('amount').value) || 0;
+        var taxAmount = parseFloat(document.getElementById('tax_amount').value) || 0;
+        var totalAmount = amount + taxAmount;
+        document.getElementById('total_amount').value = totalAmount.toFixed(2);
+        generateSignature(); // Update signature when total amount changes
+    }
+
+    // Function to auto-generate signature
+    function generateSignature() {
+        var currentTime = new Date();
+        var formattedTime = currentTime.toISOString().slice(2, 10).replace(/-/g, '') + '-' + currentTime.getHours() +
+            currentTime.getMinutes() + currentTime.getSeconds();
+        document.getElementById("transaction_uuid").value = formattedTime;
+
+        var totalAmount = document.getElementById("total_amount").value;
+        var transactionUuid = document.getElementById("transaction_uuid").value;
+        var productCode = document.getElementById("product_code").value;
+        var secret = document.getElementById("secret").value;
+
+        var hash = CryptoJS.HmacSHA256(
+            `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${productCode}`,
+            `${secret}`);
+        var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+        document.getElementById("signature").value = hashInBase64;
+    }
+
+    // Event listeners to call updateTotalAmount() and generateSignature() when inputs are changed
+    document.getElementById('amount').addEventListener('input', updateTotalAmount);
+    document.getElementById('tax_amount').addEventListener('input', updateTotalAmount);
+    document.getElementById('product_code').addEventListener('input', generateSignature);
+    document.getElementById('secret').addEventListener('input', generateSignature);
+  </script>
+{% endblock content %}

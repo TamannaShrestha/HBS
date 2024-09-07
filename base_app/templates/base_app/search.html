@@ -1,0 +1,44 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}
+Hotels
+{% endblock title %}
+
+{% block hotelactive %}active{% endblock hotelactive %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'base_app\css\hotels_lists.css' %}">
+{% endblock head %}
+
+{% block content %}
+
+      <h1>your search results</h1>
+      <div class="list-container">
+        <div class="row">
+            {% for hotel in hotel_list %}
+            <div class="col-lg-4">
+
+                
+                <div class="card hotel-card text-center">
+                    <img src="{{hotel.description_image.url}}" class="card-img" alt="{{hotel.name}}">
+                    <div class="card-img-overlay">
+                        <h5 class="card-title hotel-name">{{ hotel.name }}</h5>
+                        <p class="card-text hotel-desc">{{ hotel.description|truncatechars:200 }}</p>
+                    </div>
+                    <div class="rating_button_wrapper">
+                        <span class="hotel-rating">Rating: {{ hotel.get_average_rating }} ⭐</span>
+                        <button class="btn btn-info hotel-details">
+                            <a href="{% url 'details' hotel.reference_id %}">Go to Details</a>
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+{% endblock content %}

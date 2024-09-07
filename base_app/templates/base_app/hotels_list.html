@@ -1,0 +1,91 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}
+Hotels
+{% endblock title %}
+
+{% block hotelactive %}active{% endblock hotelactive %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'base_app\css\hotels_lists.css' %}">
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+    <div class="content-wrapper">
+        <div class="form-container">
+            <form class="d-flex" role="search" method="GET" action="{% url 'search' %}">
+                <input class="form-control me-2" type="search" name='query' placeholder="Search" aria-label="Search"
+                    value="{{ query|default:'' }}     ">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+        {% if recommended_hotels %}
+        <div class="recommendations-container">
+            <span id="recommendations-header">Our Recommendations</span>
+            <div class="recommended-hotels-container">
+                
+                <div class="row">
+                    {% for hotel in recommended_hotels %}
+                    <div class="col-lg-6">
+                        <div class="card hotel-card text-center">
+                            <img src="{{hotel.description_image.url}}" class="card-img" alt="{{hotel.name}}">
+                            <div class="card-img-overlay">
+                                <h5 class="card-title hotel-name">{{ hotel.name }}</h5>
+                                <p class="card-text hotel-desc">{{ hotel.description|truncatechars:200 }}</p>
+                            </div>
+                            <div class="rating_button_wrapper">
+                                <span class="hotel-rating">Rating: {{ hotel.get_average_rating }} ⭐</span>
+                                <button class="btn btn-info hotel-details">
+                                    <a href="{% url 'details' hotel.reference_id %}">Go to Details</a>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <hr>
+    {% if hotels.count %}
+
+    <div class="normal-container">
+        <span id="normal-header">My Hotels</span>
+        <div class="list-container">
+            <div class="row">
+                {% for hotel in hotels %}
+                <div class="col-lg-4">
+
+                    
+                    <div class="card hotel-card text-center">
+                        <img src="{{hotel.description_image.url}}" class="card-img" alt="{{hotel.name}}">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title hotel-name">{{ hotel.name }}</h5>
+                            <p class="card-text hotel-desc">{{ hotel.description|truncatechars:200 }}</p>
+                        </div>
+                        <div class="rating_button_wrapper">
+                            <span class="hotel-rating">Rating: {{ hotel.get_average_rating }} ⭐</span>
+                            <button class="btn btn-info hotel-details">
+                                <a href="{% url 'details' hotel.reference_id %}">Go to Details</a>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <h3>No search results found :</h3>
+    {% endif %}
+</div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,32 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block bookingactive %}active{% endblock bookingactive %}
+
+{% block title %}
+My Bookings
+{% endblock title %}
+{% block content %}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Booking UUID</th>
+        <th scope="col">Username</th>
+        <th scope="col">Check In</th>
+        <th scope="col">Check out</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+      <tr>
+        <th scope="row">{{booking.reference_id}}</th>
+        <td>{{booking.user.username }}</td>
+        <td>{{booking.booked_on}}</td>
+        <td>{{booking.checked_out_on}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  
+{% endblock content %}

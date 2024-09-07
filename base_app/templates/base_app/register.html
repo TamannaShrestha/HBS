@@ -1,0 +1,55 @@
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'blog_app/css/register.css' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h4>Register</h4>
+                            <a href="{% url 'hotels_list' %}" class="btn btn-outline-danger btn-sm">x</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" class="register-form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="first_name">First Name</label>
+                                <input type="text" name="first_name" class="form-control" id="register-first-name" required minlength="3" maxlength="15">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" id="register-last-name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" class="form-control" id="register-email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" name="password" class="form-control" id="register-password" required minlength="6">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="register-submit">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>

@@ -1,0 +1,83 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+
+{% block title %}
+{{ hotel.name }}
+{% endblock title %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+<link rel="stylesheet" href="{% static 'base_app/css/details.css' %}">
+{% endblock head %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="image-container" style="background-image: url({{ hotel.description_image.url }});"></div>
+    <div class="content-container">
+        <h1>{{ hotel.name }}</h1>
+        <p>{{ hotel.description }}</p>
+        <div class="form-container">
+            <form method="POST" action="{% url 'details' uuid=hotel.reference_id %}">
+                {% csrf_token %}
+                <div class="date-container">
+                    <div>
+                        <label for="check_in">Check In Date</label>
+                        <input type="date" name="check_in">
+                    </div>
+                    <div>
+                        <label for="check_out">Check Out Date</label>
+                        <input type="date" name="check_out">
+                    </div>
+                </div>
+                <button type="submit" name="book" class="btn btn-primary">Book</button>
+            </form>
+
+            <!-- Modal for payment -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Payment</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" onsubmit="generateSignature()" target="_blank">
+                                <!-- Payment fields -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  // Function to auto-generate signature
+  function generateSignature() {
+      var currentTime = new Date();
+      var formattedTime = currentTime.toISOString().slice(2, 10).replace(/-/g, '') + '-' + currentTime.getHours() +
+          currentTime.getMinutes() + currentTime.getSeconds();
+      document.getElementById("transaction_uuid").value = formattedTime;
+
+      var total_amount = document.getElementById("total_amount").value;
+      var transaction_uuid = document.getElementById("transaction_uuid").value;
+      var product_code = document.getElementById("product_code").value;
+      var secret = "8gBm/:&EnhH.1/q";
+
+      var hash = CryptoJS.HmacSHA256(
+          `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`,
+          `${secret}`);
+      var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+      document.getElementById("signature").value = hashInBase64;
+  }
+
+  // Event listeners to call generateSignature() when inputs are changed
+  document.getElementById("total_amount").addEventListener("input", generateSignature);
+  document.getElementById("transaction_uuid").addEventListener("input", generateSignature);
+  document.getElementById("product_code").addEventListener("input", generateSignature);
+  document.getElementById("secret").addEventListener("input", generateSignature);
+</script>
+{% endblock content %}
