@@ -12,6 +12,7 @@ Hotels
 {% endblock head %}
 
 {% block content %}
+<a href=" {% url 'logout' %} "><button type="submit" class="btn btn-dark mx-2">Logout</button></a>
 <div class="container">
     <div class="content-wrapper">
         <div class="form-container">
@@ -81,10 +82,12 @@ Hotels
             </div>
         </div>
     </div>
+   
     {% else %}
     <h3>No search results found :</h3>
     {% endif %}
 </div>
+{% include 'base_app/location.html' %}
 
 
 

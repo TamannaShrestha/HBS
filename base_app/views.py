@@ -79,12 +79,11 @@ def login_view(request: HttpRequest) :
     
     return redirect(reverse_lazy('hotels_list'))
     
-def logout_view(request: HttpRequest) :
-    if request.method == "GET" :
-        if request.user.is_authenticated : 
-            logout(request)
+def logout_view(request) :
     
-    return redirect(reverse_lazy('hotels_list'))
+            logout(request)
+            return redirect('signin')
+
 
 def register_view(request: HttpRequest) :
 
@@ -127,6 +126,18 @@ def handlesearch(request):
     return render (request,"base_app/search.html",{
         'hotel_list':all_hotels
     })
+
+def handle_login(request):
+    if request.method == "POST" : 
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username , password=password)
+        if user : 
+            login(request, user)
+    
+            return redirect(reverse_lazy('hotels_list'))
+    return render(request,"base_app/login.html")
     
     
     
